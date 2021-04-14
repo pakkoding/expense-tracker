@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  app:
+    build: ./app
+    ports:
+      - "8000:8000"
+    image: app
+    command: python manage.py runserver 0.0.0.0:8000
+    env_file: &envfile
+      - .env
+    volumes:
+      - ./app:/app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:11
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ${DB_LOCATION}:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_DB=${DB_DBNAME}
+    command: postgres -c log_temp_files=10240
+    shm_size: 1g
+
+  front:
+    build: ./front
+    ports:
+      - "3000:3000"
+    env_file: *envfile
+    volumes:
+      - ./front:/usr/src/front
+    stdin_open: true
+    command: bash -c "yarn install && yarn run dev"
