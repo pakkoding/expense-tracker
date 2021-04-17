@@ -16,6 +16,9 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
 
   useEffect(() => {
     if (item) {
+      // item = _(item).toPairs().sortBy(0).fromPairs().value()
+      // array keys => loop key
+      // add field group_id from api
       const skipFields = new Set(['id', 'key'])
       const results = []
       _.each(item, (val, key) => {
@@ -70,12 +73,14 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
           onOk={e => setVisible(true)}
           onCancel={e => setVisible(false)}
           footer={[
-            <Button
-              key="delete"
-              type="danger"
-              onClick={e => onCallbackDelete(item)}>
-              ลบ
-            </Button>,
+            mode === 'edit'
+              ? <Button
+                  key="delete"
+                  type="danger"
+                  onClick={e => onCallbackDelete(item)}>
+                ลบ
+              </Button>
+              : null,
             <Button
               key="back"
               onClick={e => setVisible(false)}>

@@ -4,8 +4,8 @@ import PropTypes from 'prop-types'
 import { _translator } from './function/translator'
 import moment from 'moment'
 
-export default function FormDatetimePicker ({ name, onCallback, oldValue }) {
-  const DATE_FORMAT = 'YYYY-MM-DD hh:mm:ss'
+export default function FormDatePicker ({ name, onCallback, oldValue }) {
+  const DATE_FORMAT = 'YYYY-MM-DD'
   const [value, setValue] = useState(null)
 
   useEffect(() => {
@@ -24,13 +24,12 @@ export default function FormDatetimePicker ({ name, onCallback, oldValue }) {
       <DatePicker
         style={{ width: '100%' }}
         onChange={dt => setValue(dt)}
-        showTime
         format={DATE_FORMAT}
         value={value} />
     </Form.Item>)
 }
 
-FormDatetimePicker.propTypes = {
+FormDatePicker.propTypes = {
   name: PropTypes.string,
   oldValue: PropTypes.string,
   onCallback: PropTypes.func
