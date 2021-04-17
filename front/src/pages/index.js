@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import Head from 'next/head'
 import { useDispatch, useSelector } from 'react-redux'
-import styles from '../styles/Home.module.css'
+import styles from '../styles/login.module.css'
 import Image from 'next/image'
 import { Card, Input, Form, Button } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
@@ -26,7 +26,7 @@ export default function Login () {
 
   useEffect(() => {
     if (loggedIn) {
-      router.push('/home')
+      router.push('/statement')
     }
   }, [loggedIn])
 

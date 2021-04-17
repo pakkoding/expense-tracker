@@ -19,8 +19,6 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
         if (!skipFields.has(key.toLowerCase())) {
           if (_.includes(key, 'date')) {
             type = (<FormDatetimePicker name={key} oldValue={val} onCallback={setItem} />)
-          } else if (_.includes(key, 'time')) {
-            type = 'time'
           } else {
             type = (<FormInputText name={key} oldValue={val} onCallback={setItem} />)
           }
@@ -63,12 +61,12 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
               key="delete"
               type="danger"
               onClick={e => onCallbackDelete(item)}>
-              Delete
+              ลบ
             </Button>,
             <Button
               key="back"
               onClick={e => setVisible(false)}>
-              Cancel
+              ยกเลิก
             </Button>,
             <Button
               key="submit"
