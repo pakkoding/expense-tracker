@@ -1,0 +1,92 @@
+[
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "เงินเดือน",
+      "datetime": "2021-04-16 16:12:12",
+      "type": "รายรับ",
+      "group": 5,
+      "amount": 10000
+    }
+  },
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "ได้รับเงินปันผลจากหุ้น A",
+      "datetime": "2021-04-16 16:12:12",
+      "type": "รายรับ",
+      "group": 5,
+      "amount": 500
+    }
+  },
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "เติมเงิน easy pass",
+      "datetime": "2021-04-16 16:12:12",
+      "type": "รายจ่าย",
+      "group": 3,
+      "amount": 200
+    }
+  },
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "ข้าวผัดกระเพราหมูสับ",
+      "datetime": "2021-04-16 12:12:12",
+      "type": "รายจ่าย",
+      "group": 1,
+      "amount": 45
+    }
+  },
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "ข้าวกะเพราไก่",
+      "datetime": "2021-04-16 16:12:12",
+      "type": "รายจ่าย",
+      "group": 1,
+      "amount": 45
+    }
+  },
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "ข้าวผักหมู",
+      "datetime": "2021-04-16 18:12:12",
+      "type": "รายจ่าย",
+      "group": 1,
+      "amount": 45
+    }
+  },
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "ข้าวผัดกระเพราหมูสับ",
+      "datetime": "2021-04-17 12:12:12",
+      "type": "รายจ่าย",
+      "group": 1,
+      "amount": 45
+    }
+  },
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "ข้าวกะเพราไก่",
+      "datetime": "2021-04-17 16:12:12",
+      "type": "รายจ่าย",
+      "group": 1,
+      "amount": 45
+    }
+  },
+  {
+    "model": "expense_tracker_app.Statement",
+    "fields": {
+      "name": "KFC",
+      "datetime": "2021-04-17 18:12:12",
+      "type": "รายจ่าย",
+      "group": 1,
+      "amount": 199
+    }
+  }
+]

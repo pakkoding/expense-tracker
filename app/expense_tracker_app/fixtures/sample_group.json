@@ -1,0 +1,36 @@
+[
+  {
+    "model": "expense_tracker_app.StatementGroup",
+    "pk": 1,
+    "fields": {
+      "name": "อาหาร"
+    }
+  },
+  {
+    "model": "expense_tracker_app.StatementGroup",
+    "pk": 2,
+    "fields": {
+      "name": "ของใช้ภายในบ้าน"
+    }
+  },
+  {
+    "model": "expense_tracker_app.StatementGroup",
+    "pk": 3,
+    "fields": {
+      "name": "สินค้าและบริการ"
+    }
+  },
+  {
+    "model": "expense_tracker_app.StatementGroup",
+    "pk": 4,
+    "fields": {
+      "name": "ออมเงิน"
+    }
+  },{
+    "model": "expense_tracker_app.StatementGroup",
+    "pk": 5,
+    "fields": {
+      "name": "รายได้"
+    }
+  }
+]

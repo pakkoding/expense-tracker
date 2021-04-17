@@ -43,8 +43,6 @@ urlpatterns = [
     path('api/auth/', user_views.AuthView.as_view()),
     path('user/', include('user_auth.urls')),
     path('api/app/', include('expense_tracker_app.urls')),
-    # path('data_manager/', include('data_manager.urls')),
-    # path('workstation/' , include('workstation.urls')),
 
     path('admin/', admin.site.urls),
 
