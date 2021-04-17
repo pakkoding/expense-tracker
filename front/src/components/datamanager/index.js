@@ -7,7 +7,7 @@ import FormDatetimePicker from '../formDatetimePicker'
 import FormSelection from '../formSelection'
 import { _isSelectionList } from '../../mixins/selectionList'
 
-export default function DataManagerModal ({ title, item, mode, onCallbackEdit, onCallbackAdd, onCallbackDelete }) {
+export default function DataManagerModal ({ title, item, mode, onCallbackEdit, onCallbackAdd, onCallbackDelete, selectionList }) {
   const [visible, setVisible] = useState(false)
   const [allInputs, setAllInputs] = useState([])
   const [form] = Form.useForm()
@@ -22,7 +22,7 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
           if (_.includes(key, 'date')) {
             type = (<FormDatetimePicker name={key} oldValue={val} onCallback={setItem} />)
           } else if (_isSelectionList(key)) {
-            type = (<FormSelection name={key} oldValue={val} onCallback={setItem} optionList={[{ text: 'test', value: '1' }, { text: 'pak', value: '2' }]} />)
+            type = (<FormSelection name={key} oldValue={val} onCallback={setItem} optionList={selectionList[key]} />)
           } else {
             type = (<FormInputText name={key} oldValue={val} onCallback={setItem} />)
           }
@@ -33,6 +33,8 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
       })
       setAllInputs(results)
       setVisible(true)
+    } else {
+      setVisible(false)
     }
   }, [item])
 
@@ -99,5 +101,5 @@ DataManagerModal.propTypes = {
   onCallbackEdit: PropTypes.func,
   onCallbackAdd: PropTypes.func,
   onCallbackDelete: PropTypes.func,
-  selectionList: PropTypes.array
+  selectionList: PropTypes.object
 }
