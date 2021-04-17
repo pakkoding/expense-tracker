@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import FormInputText from '../formInputText'
 import FormDatetimePicker from '../formDatetimePicker'
+import FormSelection from '../formSelection'
+import { _isSelectionList } from '../../mixins/selectionList'
 
 export default function DataManagerModal ({ title, item, mode, onCallbackEdit, onCallbackAdd, onCallbackDelete }) {
   const [visible, setVisible] = useState(false)
@@ -19,6 +21,8 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
         if (!skipFields.has(key.toLowerCase())) {
           if (_.includes(key, 'date')) {
             type = (<FormDatetimePicker name={key} oldValue={val} onCallback={setItem} />)
+          } else if (_isSelectionList(key)) {
+            type = (<FormSelection name={key} oldValue={val} onCallback={setItem} optionList={[{ text: 'test', value: '1' }, { text: 'pak', value: '2' }]} />)
           } else {
             type = (<FormInputText name={key} oldValue={val} onCallback={setItem} />)
           }
@@ -94,5 +98,6 @@ DataManagerModal.propTypes = {
   mode: PropTypes.string,
   onCallbackEdit: PropTypes.func,
   onCallbackAdd: PropTypes.func,
-  onCallbackDelete: PropTypes.func
+  onCallbackDelete: PropTypes.func,
+  selectionList: PropTypes.array
 }
