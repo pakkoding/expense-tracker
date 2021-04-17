@@ -64,3 +64,8 @@ a {
   padding: 0 0.5rem;
   overflow: scroll;
 }
+
+.btn-add {
+  display: block !important;
+  margin: 10px 0 10px auto !important;
+}

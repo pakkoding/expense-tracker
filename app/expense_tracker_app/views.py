@@ -1,6 +1,7 @@
 from rest_framework.generics import (ListCreateAPIView, RetrieveUpdateDestroyAPIView,)
 from expense_tracker_app.models import (StatementGroup, Statement)
-from expense_tracker_app.serializers import (StatementGroupSerializer, StatementSerializer, StatementUDSerializer)
+from expense_tracker_app.serializers import (StatementGroupSerializer, StatementSerializerView,
+                                             StatementUDSerializer, StatementSerializerCreate)
 # from rest_framework.permissions import (IsAuthenticated)
 
 
@@ -18,8 +19,15 @@ class ManageStatementGroupUD(RetrieveUpdateDestroyAPIView):
         return StatementGroup.objects.all()
 
 
-class ManageStatementCR(ListCreateAPIView):
-    serializer_class = StatementSerializer
+class ManageStatementView(ListCreateAPIView):
+    serializer_class = StatementSerializerView
+
+    def get_queryset(self):
+        return Statement.objects.all()
+
+
+class ManageStatementCreate(ListCreateAPIView):
+    serializer_class = StatementSerializerCreate
 
     def get_queryset(self):
         return Statement.objects.all()

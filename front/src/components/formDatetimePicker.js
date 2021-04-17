@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { DatePicker, Form } from 'antd'
 import PropTypes from 'prop-types'
-import { _translator } from '../mixins/translator'
+import { _translator } from './function/translator'
 import moment from 'moment'
 
 export default function FormDatetimePicker ({ name, onCallback, oldValue }) {
@@ -18,8 +18,8 @@ export default function FormDatetimePicker ({ name, onCallback, oldValue }) {
 
   return (
     <Form.Item
-      validateStatus={!value && 'error'}
-      help={!value && `กรุณากรอก ${_translator(name)}`}
+      validateStatus={value === '' && 'error'}
+      help={value === '' && `กรุณากรอก ${_translator(name)}`}
       label={_translator(name)}>
       <DatePicker
         style={{ width: '100%' }}

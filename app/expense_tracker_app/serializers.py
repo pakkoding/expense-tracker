@@ -8,20 +8,22 @@ class StatementGroupSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class StatementSerializer(serializers.ModelSerializer):
+class StatementUDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Statement
+        fields = '__all__'
+
+
+class StatementSerializerCreate(serializers.ModelSerializer):
+    class Meta:
+        model = Statement
+        fields = '__all__'
+
+
+class StatementSerializerView(StatementSerializerCreate):
     group = serializers.SerializerMethodField()
 
     def get_group(self, ins):
         if ins.group is not None:
             return ins.group.name
         return None
-
-    class Meta:
-        model = Statement
-        fields = '__all__'
-
-
-class StatementUDSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Statement
-        fields = '__all__'

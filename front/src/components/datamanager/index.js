@@ -5,7 +5,9 @@ import _ from 'lodash'
 import FormInputText from '../formInputText'
 import FormDatetimePicker from '../formDatetimePicker'
 import FormSelection from '../formSelection'
-import { _isSelectionList } from '../../mixins/selectionList'
+import { _isSelectionList } from '../function/isSelectionList'
+import { _findNullObject } from '../function/findNullObject'
+import { _alertMessage } from '../function/messenger'
 
 export default function DataManagerModal ({ title, item, mode, onCallbackEdit, onCallbackAdd, onCallbackDelete, selectionList }) {
   const [visible, setVisible] = useState(false)
@@ -43,10 +45,15 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
   }
 
   function sendData () {
-    if (ifEditMode(mode)) {
-      onCallbackEdit(item)
+    const findNull = _findNullObject(item)
+    if (findNull === 0) {
+      if (ifEditMode(mode)) {
+        onCallbackEdit(item)
+      } else {
+        onCallbackAdd(item)
+      }
     } else {
-      onCallbackAdd(item)
+      _alertMessage('warning', 'กรุณากรอกข้อมูลให้ครบถ้วน')
     }
   }
 

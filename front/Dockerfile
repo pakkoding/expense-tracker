@@ -6,6 +6,7 @@ WORKDIR /usr/src/front
 ENV PATH /usr/src/front/node_modules/.bin:$PATH
 
 COPY package.json /usr/src/front/
+#COPY node_modules /usr/src/front/
 
 RUN npm install
 RUN npm install react-scripts -g

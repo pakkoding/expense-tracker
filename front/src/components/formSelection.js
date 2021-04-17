@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Select } from 'antd'
 import PropTypes from 'prop-types'
-import { _translator } from '../mixins/translator'
+import { _translator } from './function/translator'
 
 export default function FormSelection ({ name, onCallback, oldValue, optionList }) {
   const { Option } = Select
@@ -17,8 +17,8 @@ export default function FormSelection ({ name, onCallback, oldValue, optionList 
 
   return (
     <Form.Item
-      validateStatus={!value && 'error'}
-      help={!value && `กรุณากรอก ${_translator(name)}`}
+      validateStatus={value === '' && 'error'}
+      help={value === '' && `กรุณากรอก ${_translator(name)}`}
       label={_translator(name)}>
       <Select
         onChange={selected => setValue(selected)}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input } from 'antd'
 import PropTypes from 'prop-types'
-import { _translator } from '../mixins/translator'
+import { _translator } from './function/translator'
 
 export default function FormInputText ({ name, onCallback, oldValue }) {
   const [value, setValue] = useState(null)
@@ -16,8 +16,8 @@ export default function FormInputText ({ name, onCallback, oldValue }) {
 
   return (
     <Form.Item
-      validateStatus={!value && 'error'}
-      help={!value && `กรุณากรอก ${_translator(name)}`}
+      validateStatus={value === '' && 'error'}
+      help={value === '' && `กรุณากรอก ${_translator(name)}`}
       label={_translator(name)}>
       <Input value={value} onChange={e => setValue(e.target.value)} />
     </Form.Item>)
