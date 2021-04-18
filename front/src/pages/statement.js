@@ -99,9 +99,7 @@ export default useMasterLayout(
     }, [groupStatementParam])
 
     useEffect(() => {
-      if (tableData && Array.isArray(tableData) && tableData.length > 0) {
-        searchDashboard()
-      }
+      searchDashboard()
     }, [tableData])
 
     async function getGroupStatement () {
