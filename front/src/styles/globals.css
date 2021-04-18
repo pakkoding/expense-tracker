@@ -68,3 +68,7 @@ a {
   display: block !important;
   margin: 10px 0 10px auto !important;
 }
+
+.clickable {
+  cursor: pointer;
+}

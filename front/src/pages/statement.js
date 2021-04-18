@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import useMasterLayout from '../layout/UseMasterLayout'
 import { Row, Col, Table, Card, Statistic, Divider, Button, Form, List } from 'antd'
 import Pie from '@ant-design/charts/lib/pie'
-import { PlusOutlined, MinusOutlined, WalletOutlined,
-  PlusSquareOutlined, ContainerOutlined, DeleteOutlined } from '@ant-design/icons'
+import {
+  PlusOutlined, MinusOutlined, WalletOutlined,
+  PlusSquareOutlined, ContainerOutlined, DeleteOutlined
+} from '@ant-design/icons'
 import axios from 'axios'
 import moment from 'moment'
 import _ from 'lodash'
@@ -14,7 +16,11 @@ import { _formatDatetime } from '../components/function/formatDatetime'
 import { _alertMessage } from '../components/function/messenger'
 import { _numberToPrice } from '../components/function/numberToPrice'
 import { _translator } from '../components/function/translator'
-import { _getGroupStatement, _findGroupStatementValue, _findGroupStatementText } from '../components/function/getGroupStatement'
+import {
+  _getGroupStatement,
+  _findGroupStatementValue,
+  _findGroupStatementText
+} from '../components/function/getGroupStatement'
 import { _findNullObject } from '../components/function/findNullObject'
 import { _pieConfig } from '../components/chart/pieChart.config'
 import { _sorterWithLocalCompare } from '../components/function/sorterWithLocalCompare'
@@ -39,7 +45,7 @@ export default useMasterLayout(
     const [dashboardConfig, setDashboardConfig] = useState({ start_date: INIT_DATE, end_date: INIT_DATE })
     const [pieExpense, setPieExpense] = useState(null)
     const [pieRevenue, setPieRevenue] = useState(null)
-    const [isAddGroupStatement, setIsAddGroupStatement] = useState(false)
+    const [isAddGroupStatement, setIsAddGroupStatement] = useState(true)
     const [groupStatementParam, setGroupStatementParam] = useState(null)
     const columns = [
       {
@@ -78,14 +84,16 @@ export default useMasterLayout(
 
     useEffect(async () => {
       await getStatement()
-      await manageGroupStatement()
+      await getGroupStatement()
     }, [])
 
     useEffect(() => {
-      searchDashboard()
-    }, [tableData])
+      if (!groupStatementParam) {
+        setIsAddGroupStatement(true)
+      }
+    }, [groupStatementParam])
 
-    async function manageGroupStatement () {
+    async function getGroupStatement () {
       const groupStatementData = await _getGroupStatement()
       if (groupStatementData) {
         setGroupStatement(groupStatementData)
@@ -233,10 +241,34 @@ export default useMasterLayout(
       setGroupStatementParam({ name: value })
     }
 
+    async function manageGroupStatement (id = null, text) {
+      if (isAddGroupStatement) {
+        await addGroupStatement()
+      } else {
+        await editGroupStatement()
+      }
+    }
+
+    async function changeGroupStatementMode (id = null, text) {
+      setIsAddGroupStatement(false)
+      setGroupStatementParam({ name: text, id: id })
+    }
+
+    async function editGroupStatement () {
+      axios.patch(`${API_URL}/app/statement/group/${groupStatementParam.id}/`, groupStatementParam).then(() => {
+        getGroupStatement()
+        resetGroupStatement()
+        _alertMessage('success', 'แก้ไขหมวดหมู่สำเร็จ')
+      }).catch(error => {
+        _alertMessage('error', 'เกิดข้อผิดพลาด', error)
+      })
+    }
+
     async function addGroupStatement () {
       if (groupStatementParam?.name) {
         axios.post(`${API_URL}/app/statement/group/`, groupStatementParam).then(() => {
-          manageGroupStatement()
+          getGroupStatement()
+          resetGroupStatement()
           _alertMessage('success', 'เพิ่มหมวดหมู่สำเร็จ', `เพิ่มหมวดหมู่ ${groupStatementParam.name} แล้ว`)
         }).catch(error => {
           _alertMessage('error', 'เกิดข้อผิดพลาด', error)
@@ -244,7 +276,12 @@ export default useMasterLayout(
       }
     }
 
-    function deleteGroup (idx) {
+    function resetGroupStatement () {
+      setGroupStatementParam(null)
+      setIsAddGroupStatement(true)
+    }
+
+    function deleteGroupStatement (idx) {
       Swal.fire({
         icon: 'info',
         title: 'คุณต้องการลบหมวดหมู่นี้ใช่ไหม?',
@@ -256,7 +293,7 @@ export default useMasterLayout(
       }).then(async (result) => {
         if (result.isConfirmed) {
           axios.delete(`${API_URL}/app/statement/group/${idx}`).then(() => {
-            manageGroupStatement()
+            getGroupStatement()
             _alertMessage('success', 'ลบสำเร็จ')
           }).catch(error => {
             _alertMessage('error', 'เกิดข้อผิดพลาด', error)
@@ -271,36 +308,36 @@ export default useMasterLayout(
         <Col xs={24} md={6}>
           <Card>
             <Statistic
-            title="รายรับ"
-            value={_numberToPrice(totalRevenueAmount)}
-            precision={NUMBER_PRECISION}
-            valueStyle={{ color: '#3f8600' }}
-            prefix={<PlusOutlined />}
-            suffix={NUMBER_CURRENCY}
-          />
+              title="รายรับ"
+              value={_numberToPrice(totalRevenueAmount)}
+              precision={NUMBER_PRECISION}
+              valueStyle={{ color: '#3f8600' }}
+              prefix={<PlusOutlined />}
+              suffix={NUMBER_CURRENCY}
+            />
           </Card>
         </Col>
         <Col xs={24} md={6}>
           <Card>
             <Statistic
-            title="รายจ่าย"
-            value={_numberToPrice(totalExpenseAmount)}
-            precision={NUMBER_PRECISION}
-            valueStyle={{ color: '#cf1322' }}
-            prefix={<MinusOutlined />}
-            suffix={NUMBER_CURRENCY}
-          />
+              title="รายจ่าย"
+              value={_numberToPrice(totalExpenseAmount)}
+              precision={NUMBER_PRECISION}
+              valueStyle={{ color: '#cf1322' }}
+              prefix={<MinusOutlined />}
+              suffix={NUMBER_CURRENCY}
+            />
           </Card>
         </Col>
         <Col xs={24} md={6}>
           <Card>
             <Statistic
-            title="คงเหลือ"
-            value={_numberToPrice(totalRemainAmount)}
-            precision={NUMBER_PRECISION}
-            prefix={<WalletOutlined />}
-            suffix={NUMBER_CURRENCY}
-          />
+              title="คงเหลือ"
+              value={_numberToPrice(totalRemainAmount)}
+              precision={NUMBER_PRECISION}
+              prefix={<WalletOutlined />}
+              suffix={NUMBER_CURRENCY}
+            />
           </Card>
         </Col>
       </Row>
@@ -321,7 +358,7 @@ export default useMasterLayout(
               return {
                 onClick: () => { useModal('edit', record, recordIdx) }
               }
-           }}
+            }}
           />
         </Col>
       </Row>
@@ -345,10 +382,10 @@ export default useMasterLayout(
       </Row>
       <Row style={{ margin: '30px 0' }}
            justify={'center'}>
-        <Col md={10} sm={24}>
+        <Col md={10} xs={24}>
           {pieRevenue && <Pie {..._pieConfig('รายรับ')} data={pieRevenue} />}
         </Col>
-        <Col md={10} sm={24} key={'12'}>
+        <Col md={10} xs={24} key={'12'}>
           {pieExpense && <Pie {..._pieConfig('รายจ่าย')} data={pieExpense} />}
         </Col>
       </Row>
@@ -359,10 +396,9 @@ export default useMasterLayout(
         onCallbackEdit={saveEditData}
         onCallbackAdd={createStatement}
         onCallbackDelete={deleteStatement}
-        selectionList={{ 'group': groupStatement, 'type': typeList }} >
+        selectionList={{ 'group': groupStatement, 'type': typeList }}>
         <Card size="small"
               title="หมวดหมู่"
-              // extra={<Button onClick={e => addGroupStatement()}>เพิ่มหมวดหมู่</Button>}
               style={{
                 width: 300,
                 alignSelf: 'center',
@@ -371,12 +407,27 @@ export default useMasterLayout(
               }}>
           <Row justify={'center'}>
             <Col span={18}>
-              <FormInputText onCallback={ChangeTextGroupStatement} />
+              <FormInputText onCallback={ChangeTextGroupStatement} oldValue={groupStatementParam?.name || null} />
             </Col>
             <Col span={6}>
               <Button
-                onClick={e => addGroupStatement()}
-                style={{ background: 'green', color: 'white', border: 'none' }}>เพิ่ม</Button>
+                onClick={e => manageGroupStatement()}
+                style={{
+                  background: `${isAddGroupStatement ? 'green' : 'blue'}`,
+                  color: 'white',
+                  border: 'none'
+                }}>
+                {isAddGroupStatement ? 'เพิ่ม' : 'แก้ไข'}
+              </Button>
+              {!isAddGroupStatement && <small
+                className={'clickable'}
+                style={{
+                  position: 'absolute',
+                  right: '50%',
+                  bottom: '0',
+                  transform: 'translateX(30%)'
+                }}
+                onClick={e => resetGroupStatement()}><u>ยกเลิก</u></small>}
             </Col>
           </Row>
           <List
@@ -386,13 +437,13 @@ export default useMasterLayout(
               <List.Item>
                 <List.Item.Meta
                   avatar={<ContainerOutlined />}
-                  onClick={e => manageGroupStatement(item.value)}
+                  onClick={e => changeGroupStatementMode(item.value, item.text)}
                   title={<div>{item.text}
                     <Button
                       color={'red'}
                       style={{ float: 'right', color: '#ef6e6c', border: 'none' }}
                       size={'small'}
-                      onClick={e => deleteGroup(item.value)}>
+                      onClick={e => deleteGroupStatement(item.value)}>
                       <DeleteOutlined />
                     </Button>
                   </div>}
