@@ -365,6 +365,7 @@ export default useMasterLayout(
             columns={columns}
             dataSource={tableData}
             pagination={false}
+            rowClassName={(record, idx) => 'clickable table-statement-row'}
             onRow={(record, recordIdx) => {
               return {
                 onClick: () => { useModal('edit', record, recordIdx) }
@@ -456,8 +457,9 @@ export default useMasterLayout(
             size="small"
             dataSource={groupStatement}
             renderItem={(item) => (
-              <List.Item>
+              <List.Item className={'set-row-hover'}>
                 <List.Item.Meta
+                  className={'clickable'}
                   avatar={<ContainerOutlined />}
                   onClick={e => changeGroupStatementMode(item.value, item.text)}
                   title={<div>{item.text}
