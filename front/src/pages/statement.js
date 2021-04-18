@@ -81,9 +81,27 @@ export default useMasterLayout(
       },
       {
         title: _translator('amount'),
+        align: 'right',
         dataIndex: 'amount',
         sorter: (a, b) => a.amount - b.amount,
-        sortDirections: ['descend', 'ascend']
+        sortDirections: ['descend', 'ascend'],
+        render (text, record) {
+          function getValue (record) {
+            return {
+              color: record['type'] === 'รายรับ' ? 'limegreen' : 'crimson',
+              symbol: record['type'] === 'รายรับ' ? '+' : '-'
+            }
+          }
+          return {
+            props: {
+              style: { color: `${getValue(record)['color']}` }
+            },
+            children: <div>{getValue(record).symbol} {Number(text).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}</div>
+          }
+        }
       }
     ]
 
@@ -161,10 +179,9 @@ export default useMasterLayout(
           data[recordIndex] = resp.data
           computeStatement(data)
           _alertMessage('success', 'แก้ไขสำเร็จ')
+          resetState()
         }).catch(error => {
           _alertMessage('error', 'เกิดข้อผิดพลาด', error)
-        }).finally(() => {
-          resetState()
         })
       }
     }
@@ -395,9 +412,9 @@ export default useMasterLayout(
         <Col xs={24} md={2}
              className={'mx-1'}
              style={{
-                    transform: 'translateY(-3%)',
-                    alignSelf: 'center'
-              }}>
+               transform: 'translateY(-3%)',
+               alignSelf: 'center'
+             }}>
           <Button type="primary"
                   onClick={e => searchDashboard()}>เรียกดู</Button>
         </Col>
