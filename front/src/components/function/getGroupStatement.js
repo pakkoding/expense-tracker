@@ -5,7 +5,7 @@ import { _alertMessage } from './messenger'
 const API_URL = process.env.NEXT_PUBLIC_APP_API_ADDRESS
 
 export const _getGroupStatement = () => {
-  return axios.get(`${API_URL}/app/statement-group/`).then(resp => {
+  return axios.get(`${API_URL}/app/statement/group/`).then(resp => {
     if (resp?.data) {
       return _.map(resp.data, item => {
         return {

@@ -153,7 +153,7 @@ export default useMasterLayout(
     }
 
     function createStatement (credential) {
-      axios.post(`${API_URL}/app/statement-create/`, credential).then(resp => {
+      axios.post(`${API_URL}/app/statement/`, credential).then(resp => {
         _alertMessage('success', 'เพิ่มรายการสำเร็จ')
         resetState()
         getStatement()
