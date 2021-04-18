@@ -251,7 +251,7 @@ export default useMasterLayout(
       setGroupStatementParam({ ...groupStatementParam, name: value })
     }
 
-    async function manageGroupStatement (id = null, text) {
+    async function manageGroupStatement () {
       if (isAddGroupStatement) {
         await addGroupStatement()
       } else {
