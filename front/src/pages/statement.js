@@ -238,7 +238,7 @@ export default useMasterLayout(
     }
 
     function ChangeTextGroupStatement (name, value) {
-      setGroupStatementParam({ name: value })
+      setGroupStatementParam({ ...groupStatementParam, name: value })
     }
 
     async function manageGroupStatement (id = null, text) {
@@ -255,6 +255,7 @@ export default useMasterLayout(
     }
 
     async function editGroupStatement () {
+      console.log({ groupStatementParam })
       axios.patch(`${API_URL}/app/statement/group/${groupStatementParam.id}/`, groupStatementParam).then(() => {
         getGroupStatement()
         resetGroupStatement()
