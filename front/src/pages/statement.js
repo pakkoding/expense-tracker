@@ -419,7 +419,8 @@ export default useMasterLayout(
         onCallbackEdit={saveEditData}
         onCallbackAdd={createStatement}
         onCallbackDelete={deleteStatement}
-        selectionList={{ 'group': statementGroupList, 'type': typeList }}>
+        selectionList={{ 'group': statementGroupList, 'type': typeList }}
+        field={['name', 'group', 'type', 'amount', 'datetime']}>
         <Card size="small"
               title="หมวดหมู่"
               style={{

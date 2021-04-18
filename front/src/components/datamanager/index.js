@@ -18,7 +18,8 @@ export default function DataManagerModal ({
   onCallbackAdd,
   onCallbackDelete,
   selectionList,
-  children
+  children,
+  field
 }) {
   const [visible, setVisible] = useState(false)
   const [allInputs, setAllInputs] = useState([])
@@ -26,28 +27,24 @@ export default function DataManagerModal ({
 
   useEffect(() => {
     if (item) {
-      // item = _(item).toPairs().sortBy(0).fromPairs().value()
-      // array keys => loop key
-      // add field group_id from api
       const skipFields = new Set(['id', 'key'])
       const results = []
-      _.each(item, (val, key) => {
+      _.each(field, (fieldName) => {
         let type = null
-        if (!skipFields.has(key.toLowerCase())) {
-          if (_.includes(key, 'date')) {
-            type = (<FormDatetimePicker name={key} oldValue={val} onCallback={setItem} />)
-          } else if (_.includes(key, 'amount')) {
-            type = (<FormInputText name={key} oldValue={val} onCallback={setItem} type={'number'} />)
-          } else if (_isSelectionList(key)) {
-            type = (<FormSelection name={key} oldValue={val} onCallback={setItem} optionList={selectionList[key]} />)
-          } else if (key === 'group') {
-            type = (
-              <DropDownStatementGroup name={key} oldValue={val} onCallback={setItem} />)
+        if (!skipFields.has(fieldName.toLowerCase())) {
+          if (_.includes(fieldName, 'date')) {
+            type = (<FormDatetimePicker name={fieldName} oldValue={item[fieldName]} onCallback={setItem} />)
+          } else if (_.includes(fieldName, 'amount')) {
+            type = (<FormInputText name={fieldName} oldValue={item[fieldName]} onCallback={setItem} type={'number'} />)
+          } else if (_isSelectionList(fieldName)) {
+            type = (<FormSelection name={fieldName} oldValue={item[fieldName]} onCallback={setItem} optionList={selectionList[fieldName]} />)
+          } else if (fieldName === 'group') {
+            type = (<DropDownStatementGroup name={fieldName} oldValue={item[fieldName]} onCallback={setItem} />)
           } else {
-            type = (<FormInputText name={key} oldValue={val} onCallback={setItem} />)
+            type = (<FormInputText name={fieldName} oldValue={item[fieldName]} onCallback={setItem} />)
           }
           results.push({
-            type, value: val
+            type, value: item[fieldName]
           })
         }
       })
@@ -139,5 +136,6 @@ DataManagerModal.propTypes = {
   onCallbackAdd: PropTypes.func,
   onCallbackDelete: PropTypes.func,
   selectionList: PropTypes.object,
-  children: PropTypes.element
+  children: PropTypes.element,
+  field: PropTypes.array
 }
