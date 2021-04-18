@@ -4,7 +4,6 @@ import { Layout, Menu } from 'antd'
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  BarChartOutlined,
   ContainerOutlined,
   UserOutlined
 } from '@ant-design/icons'
