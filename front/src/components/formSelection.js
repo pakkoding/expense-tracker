@@ -25,8 +25,8 @@ export default function FormSelection ({ name, onCallback, oldValue, optionList 
         value={value}
         placeholder="กรุณาเลือก">
         {
-          _.map(optionList, item => {
-            return <Option value={item.value}>{item.text}</Option>
+          _.map(optionList, (item, idx) => {
+            return <Option key={idx} value={item.value}>{item.text}</Option>
           })
         }
       </Select>

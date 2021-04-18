@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import useMasterLayout from '../layout/UseMasterLayout'
-import { Row, Col, Table, Card, Statistic, Divider, Button, Form } from 'antd'
+import { Row, Col, Table, Card, Statistic, Divider, Button, Form, List } from 'antd'
 import Pie from '@ant-design/charts/lib/pie'
-import { PlusOutlined, MinusOutlined, WalletOutlined, PlusSquareOutlined } from '@ant-design/icons'
+import { PlusOutlined, MinusOutlined, WalletOutlined,
+  PlusSquareOutlined, ContainerOutlined, DeleteOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import moment from 'moment'
 import _ from 'lodash'
@@ -16,7 +17,8 @@ import { _translator } from '../components/function/translator'
 import { _getGroupStatement, _findGroupStatementValue, _findGroupStatementText } from '../components/function/getGroupStatement'
 import { _findNullObject } from '../components/function/findNullObject'
 import { _pieConfig } from '../components/chart/pieChart.config'
-import Test from './test'
+import { _sorterWithLocalCompare } from '../components/function/sorterWithLocalCompare'
+import FormInputText from '../components/formInputText'
 
 export default useMasterLayout(
   function StatementOverView () {
@@ -37,6 +39,8 @@ export default useMasterLayout(
     const [dashboardConfig, setDashboardConfig] = useState({ start_date: INIT_DATE, end_date: INIT_DATE })
     const [pieExpense, setPieExpense] = useState(null)
     const [pieRevenue, setPieRevenue] = useState(null)
+    const [isAddGroupStatement, setIsAddGroupStatement] = useState(false)
+    const [groupStatementParam, setGroupStatementParam] = useState(null)
     const columns = [
       {
         title: _translator('datetime'),
@@ -47,20 +51,20 @@ export default useMasterLayout(
       {
         title: _translator('name'),
         dataIndex: 'name',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: (a, b) => _sorterWithLocalCompare(a, b, 'name'),
         sortDirections: ['descend', 'ascend']
       },
       {
         title: _translator('type'),
         dataIndex: 'type',
-        sorter: (a, b) => a.type.localeCompare(b.type),
+        sorter: (a, b) => _sorterWithLocalCompare(a, b, 'type'),
         sortDirections: ['descend', 'ascend'],
         responsive: ['md']
       },
       {
         title: _translator('group'),
         dataIndex: 'group',
-        sorter: (a, b) => a.group.localeCompare(b.group),
+        sorter: (a, b) => _sorterWithLocalCompare(a, b, 'group'),
         sortDirections: ['descend', 'ascend'],
         responsive: ['md']
       },
@@ -74,15 +78,19 @@ export default useMasterLayout(
 
     useEffect(async () => {
       await getStatement()
-      const groupStatementData = await _getGroupStatement()
-      if (groupStatementData) {
-        setGroupStatement(groupStatementData)
-      }
+      await manageGroupStatement()
     }, [])
 
     useEffect(() => {
       searchDashboard()
     }, [tableData])
+
+    async function manageGroupStatement () {
+      const groupStatementData = await _getGroupStatement()
+      if (groupStatementData) {
+        setGroupStatement(groupStatementData)
+      }
+    }
 
     function searchDashboard () {
       const revenue = manageDashboard('รายรับ')
@@ -200,7 +208,7 @@ export default useMasterLayout(
       const nullObj = _findNullObject(dashboardConfig)
       const { start_date, end_date } = dashboardConfig
       if (nullObj !== 0) {
-        _alertMessage('warning', 'กรุณาใส่วันที่ให้ครบถ้วน')
+        _alertMessage('warning', 'ไม่สามารถเรียกดูกราฟได้', 'กรุณาใส่วันที่ให้ครบถ้วน')
       } else {
         const dashboardFilter = _.filter(tableData, item =>
           _formatDatetime(item.datetime, DATE_FORMAT) <= _formatDatetime(end_date, DATE_FORMAT) &&
@@ -221,10 +229,46 @@ export default useMasterLayout(
       }
     }
 
+    function ChangeTextGroupStatement (name, value) {
+      setGroupStatementParam({ name: value })
+    }
+
+    async function addGroupStatement () {
+      if (groupStatementParam?.name) {
+        axios.post(`${API_URL}/app/statement/group/`, groupStatementParam).then(() => {
+          manageGroupStatement()
+          _alertMessage('success', 'เพิ่มหมวดหมู่สำเร็จ', `เพิ่มหมวดหมู่ ${groupStatementParam.name} แล้ว`)
+        }).catch(error => {
+          _alertMessage('error', 'เกิดข้อผิดพลาด', error)
+        })
+      }
+    }
+
+    function deleteGroup (idx) {
+      Swal.fire({
+        icon: 'info',
+        title: 'คุณต้องการลบหมวดหมู่นี้ใช่ไหม?',
+        text: 'รายการที่คุณใช้อยู่ในกลุ่มนี้จะถูกรีเซ็ทเป็นค่าว่าง',
+        showCancelButton: true,
+        confirmButtonText: 'ใช่',
+        denyButtonText: 'ยกเลิก',
+        reverseButtons: true
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          axios.delete(`${API_URL}/app/statement/group/${idx}`).then(() => {
+            manageGroupStatement()
+            _alertMessage('success', 'ลบสำเร็จ')
+          }).catch(error => {
+            _alertMessage('error', 'เกิดข้อผิดพลาด', error)
+          })
+        }
+      })
+    }
+
     return (<div className={'container'}>
       <Row gutter={[16, 16]}
            justify="end">
-        <Col sm={24} md={6}>
+        <Col xs={24} md={6}>
           <Card>
             <Statistic
             title="รายรับ"
@@ -236,7 +280,7 @@ export default useMasterLayout(
           />
           </Card>
         </Col>
-        <Col sm={24} md={6}>
+        <Col xs={24} md={6}>
           <Card>
             <Statistic
             title="รายจ่าย"
@@ -248,7 +292,7 @@ export default useMasterLayout(
           />
           </Card>
         </Col>
-        <Col sm={24} md={6}>
+        <Col xs={24} md={6}>
           <Card>
             <Statistic
             title="คงเหลือ"
@@ -294,7 +338,7 @@ export default useMasterLayout(
               oldValue={moment().format(DATE_FORMAT)}
               onCallback={changeDashboardConfig} />
             <Form.Item>
-              <Button type="primary" onClick={e => manageDashboard()}>เรียกดู</Button>
+              <Button type="primary" onClick={e => searchDashboard()}>เรียกดู</Button>
             </Form.Item>
           </Form>
         </Col>
@@ -315,10 +359,49 @@ export default useMasterLayout(
         onCallbackEdit={saveEditData}
         onCallbackAdd={createStatement}
         onCallbackDelete={deleteStatement}
-        selectionList={{ 'group': groupStatement, 'type': typeList }} />
-      <div>
-        <Test />
-      </div>
+        selectionList={{ 'group': groupStatement, 'type': typeList }} >
+        <Card size="small"
+              title="หมวดหมู่"
+              // extra={<Button onClick={e => addGroupStatement()}>เพิ่มหมวดหมู่</Button>}
+              style={{
+                width: 300,
+                alignSelf: 'center',
+                marginLeft: 'auto',
+                marginBottom: '40px'
+              }}>
+          <Row justify={'center'}>
+            <Col span={18}>
+              <FormInputText onCallback={ChangeTextGroupStatement} />
+            </Col>
+            <Col span={6}>
+              <Button
+                onClick={e => addGroupStatement()}
+                style={{ background: 'green', color: 'white', border: 'none' }}>เพิ่ม</Button>
+            </Col>
+          </Row>
+          <List
+            size="small"
+            dataSource={groupStatement}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  avatar={<ContainerOutlined />}
+                  onClick={e => manageGroupStatement(item.value)}
+                  title={<div>{item.text}
+                    <Button
+                      color={'red'}
+                      style={{ float: 'right', color: '#ef6e6c', border: 'none' }}
+                      size={'small'}
+                      onClick={e => deleteGroup(item.value)}>
+                      <DeleteOutlined />
+                    </Button>
+                  </div>}
+                />
+              </List.Item>
+            )}
+          />
+        </Card>
+      </DataManagerModal>
     </div>)
   }
 )

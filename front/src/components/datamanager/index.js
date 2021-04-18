@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Button, Form } from 'antd'
+import { Modal, Button, Form, Row, Col } from 'antd'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import FormInputText from '../formInputText'
@@ -9,7 +9,7 @@ import { _isSelectionList } from '../function/isSelectionList'
 import { _findNullObject } from '../function/findNullObject'
 import { _alertMessage } from '../function/messenger'
 
-export default function DataManagerModal ({ title, item, mode, onCallbackEdit, onCallbackAdd, onCallbackDelete, selectionList }) {
+export default function DataManagerModal ({ title, item, mode, onCallbackEdit, onCallbackAdd, onCallbackDelete, selectionList, children }) {
   const [visible, setVisible] = useState(false)
   const [allInputs, setAllInputs] = useState([])
   const [form] = Form.useForm()
@@ -72,6 +72,7 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
     <Modal
           visible={visible}
           title={title}
+          width={800}
           onOk={e => setVisible(true)}
           onCancel={e => setVisible(false)}
           footer={[
@@ -96,14 +97,23 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
             </Button>
           ]}
         >
-      <Form
-        form={form}
-        layout="vertical">
-        {_.map(allInputs, item => {
-              return item.type
-            })
-          }
-      </Form>
+      <Row>
+        <Col xs={{ span: 24, order: 2 }}
+             md={{ span: 12, order: 1 }}>
+          <Form
+            form={form}
+            layout="vertical">
+            {_.map(allInputs, item => {
+                return item.type
+                })
+            }
+          </Form>
+        </Col>
+        <Col xs={{ span: 24, order: 1 }}
+             md={{ span: 12, order: 2 }}>
+          <div>{children}</div>
+        </Col>
+      </Row>
     </Modal>
   )
 }
@@ -115,5 +125,6 @@ DataManagerModal.propTypes = {
   onCallbackEdit: PropTypes.func,
   onCallbackAdd: PropTypes.func,
   onCallbackDelete: PropTypes.func,
-  selectionList: PropTypes.object
+  selectionList: PropTypes.object,
+  children: PropTypes.element
 }
