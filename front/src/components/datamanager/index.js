@@ -26,6 +26,8 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
         if (!skipFields.has(key.toLowerCase())) {
           if (_.includes(key, 'date')) {
             type = (<FormDatetimePicker name={key} oldValue={val} onCallback={setItem} />)
+          } else if (_.includes(key, 'amount')) {
+            type = (<FormInputText name={key} oldValue={val} onCallback={setItem} type={'number'} />)
           } else if (_isSelectionList(key)) {
             type = (<FormSelection name={key} oldValue={val} onCallback={setItem} optionList={selectionList[key]} />)
           } else {

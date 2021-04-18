@@ -16,6 +16,7 @@ import { _translator } from '../components/function/translator'
 import { _getGroupStatement, _findGroupStatementValue, _findGroupStatementText } from '../components/function/getGroupStatement'
 import { _findNullObject } from '../components/function/findNullObject'
 import { _pieConfig } from '../components/chart/pieChart.config'
+import Test from './test'
 
 export default useMasterLayout(
   function StatementOverView () {
@@ -34,7 +35,8 @@ export default useMasterLayout(
     const [totalRemainAmount, setTotalRemainAmount] = useState(0)
     const [typeList] = useState([{ text: 'รายรับ', value: 'รายรับ' }, { text: 'รายจ่าย', value: 'รายจ่าย' }])
     const [dashboardConfig, setDashboardConfig] = useState({ start_date: INIT_DATE, end_date: INIT_DATE })
-    const [dashboardData, setDashboardData] = useState(null)
+    const [pieExpense, setPieExpense] = useState(null)
+    const [pieRevenue, setPieRevenue] = useState(null)
     const columns = [
       {
         title: _translator('datetime'),
@@ -79,8 +81,15 @@ export default useMasterLayout(
     }, [])
 
     useEffect(() => {
-      manageDashboard()
+      searchDashboard()
     }, [tableData])
+
+    function searchDashboard () {
+      const revenue = manageDashboard('รายรับ')
+      const expense = manageDashboard('รายจ่าย')
+      if (revenue) setPieRevenue(revenue)
+      if (expense) setPieExpense(expense)
+    }
 
     function getStatement () {
       axios.get(`${API_URL}/app/statement/`).then(resp => {
@@ -187,8 +196,7 @@ export default useMasterLayout(
       setDashboardConfig(obj => ({ ...obj, [key]: date }))
     }
 
-    function manageDashboard () {
-      console.log('inn')
+    function manageDashboard (type = null) {
       const nullObj = _findNullObject(dashboardConfig)
       const { start_date, end_date } = dashboardConfig
       if (nullObj !== 0) {
@@ -196,7 +204,8 @@ export default useMasterLayout(
       } else {
         const dashboardFilter = _.filter(tableData, item =>
           _formatDatetime(item.datetime, DATE_FORMAT) <= _formatDatetime(end_date, DATE_FORMAT) &&
-          _formatDatetime(item.datetime, DATE_FORMAT) >= _formatDatetime(start_date, DATE_FORMAT)
+          _formatDatetime(item.datetime, DATE_FORMAT) >= _formatDatetime(start_date, DATE_FORMAT) &&
+          item.type === type
         )
         const dashboardGroupBy = _.groupBy(dashboardFilter, 'group')
         const dashboardData = _.map(dashboardGroupBy, item => {
@@ -208,7 +217,7 @@ export default useMasterLayout(
             value: sumTotal
           }
         })
-        setDashboardData(dashboardData)
+        return dashboardData
       }
     }
 
@@ -293,10 +302,10 @@ export default useMasterLayout(
       <Row style={{ margin: '30px 0' }}
            justify={'center'}>
         <Col md={10} sm={24}>
-          {dashboardData && <Pie {..._pieConfig('รายรับ')} data={dashboardData} />}
+          {pieRevenue && <Pie {..._pieConfig('รายรับ')} data={pieRevenue} />}
         </Col>
-        <Col md={10} sm={24}>
-          {dashboardData && <Pie {..._pieConfig('รายจ่าย')} data={dashboardData} />}
+        <Col md={10} sm={24} key={'12'}>
+          {pieExpense && <Pie {..._pieConfig('รายจ่าย')} data={pieExpense} />}
         </Col>
       </Row>
       <DataManagerModal
@@ -307,6 +316,9 @@ export default useMasterLayout(
         onCallbackAdd={createStatement}
         onCallbackDelete={deleteStatement}
         selectionList={{ 'group': groupStatement, 'type': typeList }} />
+      <div>
+        <Test />
+      </div>
     </div>)
   }
 )

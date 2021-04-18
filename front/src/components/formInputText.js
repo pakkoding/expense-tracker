@@ -3,7 +3,7 @@ import { Form, Input } from 'antd'
 import PropTypes from 'prop-types'
 import { _translator } from './function/translator'
 
-export default function FormInputText ({ name, onCallback, oldValue }) {
+export default function FormInputText ({ name, onCallback, oldValue, type = 'text' }) {
   const [value, setValue] = useState(null)
 
   useEffect(() => {
@@ -19,12 +19,13 @@ export default function FormInputText ({ name, onCallback, oldValue }) {
       validateStatus={value === '' && 'error'}
       help={value === '' && `กรุณากรอก ${_translator(name)}`}
       label={_translator(name)}>
-      <Input value={value} onChange={e => setValue(e.target.value)} />
+      <Input value={value} onChange={e => setValue(e.target.value)} type={type} />
     </Form.Item>)
 }
 
 FormInputText.propTypes = {
   name: PropTypes.string,
   oldValue: PropTypes.string,
-  onCallback: PropTypes.func
+  onCallback: PropTypes.func,
+  type: PropTypes.string
 }
