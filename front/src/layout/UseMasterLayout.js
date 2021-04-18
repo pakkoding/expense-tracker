@@ -34,7 +34,7 @@ function useMasterLayout (AnyContent) {
             <title>Expense Tracker</title>
             <link rel="icon" href="/icons/expense-tracker.png" />
           </Head>
-          <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+          <Sider trigger={null} collapsedWidth={0} collapsible collapsed={this.state.collapsed}>
             <div className={'mt-1 text-center'}>
               <Image src="/icons/expense-tracker.png"
                      alt="expense-tracker-icon"
@@ -44,9 +44,6 @@ function useMasterLayout (AnyContent) {
             <Menu theme="dark" mode="inline" defaultSelectedKeys={['statement']}>
               <Menu.Item key="statement" icon={<ContainerOutlined />}>
                 <Link href="/">Statement</Link>
-              </Menu.Item>
-              <Menu.Item key="dashboard" icon={<BarChartOutlined />}>
-                <Link href="/">Dashboard</Link>
               </Menu.Item>
               <Menu.Item key="login" icon={<UserOutlined />}>
                 <Link href="/">Login</Link>
