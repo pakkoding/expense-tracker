@@ -425,7 +425,7 @@ export default useMasterLayout(
               style={{
                 width: 300,
                 alignSelf: 'center',
-                marginLeft: 'auto',
+                margin: 'auto',
                 marginBottom: '40px'
               }}>
           <Row justify={'center'}>
