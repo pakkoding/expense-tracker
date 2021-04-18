@@ -4,6 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 // reducer
 import { authReducer } from './reducers/authReducer'
 import { reducer as toastrReducer } from 'react-redux-toastr'
+import { indexReducer } from './reducers/indexReducer'
 
 // middleware
 import thunk from 'redux-thunk'
@@ -12,7 +13,8 @@ import interceptMessenger from '../middleware/intercept-messenger'
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  toastr: toastrReducer
+  toastr: toastrReducer,
+  store: indexReducer
 })
 const initialState = {}
 const middleware = [thunk, interceptError, interceptMessenger]

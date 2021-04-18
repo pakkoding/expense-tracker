@@ -5,11 +5,21 @@ import _ from 'lodash'
 import FormInputText from '../formInputText'
 import FormDatetimePicker from '../formDatetimePicker'
 import FormSelection from '../formSelection'
+import DropDownStatementGroup from '../ddlStatementGroup'
 import { _isSelectionList } from '../function/isSelectionList'
 import { _findNullObject } from '../function/findNullObject'
 import { _alertMessage } from '../function/messenger'
 
-export default function DataManagerModal ({ title, item, mode, onCallbackEdit, onCallbackAdd, onCallbackDelete, selectionList, children }) {
+export default function DataManagerModal ({
+  title,
+  item,
+  mode,
+  onCallbackEdit,
+  onCallbackAdd,
+  onCallbackDelete,
+  selectionList,
+  children
+}) {
   const [visible, setVisible] = useState(false)
   const [allInputs, setAllInputs] = useState([])
   const [form] = Form.useForm()
@@ -30,6 +40,9 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
             type = (<FormInputText name={key} oldValue={val} onCallback={setItem} type={'number'} />)
           } else if (_isSelectionList(key)) {
             type = (<FormSelection name={key} oldValue={val} onCallback={setItem} optionList={selectionList[key]} />)
+          } else if (key === 'group') {
+            type = (
+              <DropDownStatementGroup name={key} oldValue={val} onCallback={setItem} />)
           } else {
             type = (<FormInputText name={key} oldValue={val} onCallback={setItem} />)
           }
@@ -70,33 +83,33 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
 
   return (
     <Modal
-          visible={visible}
-          title={title}
-          width={800}
-          onOk={e => setVisible(true)}
-          onCancel={e => setVisible(false)}
-          footer={[
-            mode === 'edit'
-              ? <Button
-                  key="delete"
-                  type="danger"
-                  onClick={e => onCallbackDelete(item)}>
-                ลบ
-              </Button>
-              : null,
-            <Button
-              key="back"
-              onClick={e => setVisible(false)}>
-              ยกเลิก
-            </Button>,
-            <Button
-              key="submit"
-              type="primary"
-              onClick={e => sendData()}>
-              บันทึก{ifEditMode(mode) ? 'การแก้ไข' : ''}
-            </Button>
-          ]}
-        >
+      visible={visible}
+      title={title}
+      width={800}
+      onOk={e => setVisible(true)}
+      onCancel={e => setVisible(false)}
+      footer={[
+        mode === 'edit'
+          ? <Button
+            key="delete"
+            type="danger"
+            onClick={e => onCallbackDelete(item)}>
+            ลบ
+          </Button>
+          : null,
+        <Button
+          key="back"
+          onClick={e => setVisible(false)}>
+          ยกเลิก
+        </Button>,
+        <Button
+          key="submit"
+          type="primary"
+          onClick={e => sendData()}>
+          บันทึก{ifEditMode(mode) ? 'การแก้ไข' : ''}
+        </Button>
+      ]}
+    >
       <Row>
         <Col xs={{ span: 24, order: 2 }}
              md={{ span: 12, order: 1 }}>
@@ -104,8 +117,8 @@ export default function DataManagerModal ({ title, item, mode, onCallbackEdit, o
             form={form}
             layout="vertical">
             {_.map(allInputs, item => {
-                return item.type
-                })
+              return item.type
+            })
             }
           </Form>
         </Col>

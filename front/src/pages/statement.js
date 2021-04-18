@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import useMasterLayout from '../layout/UseMasterLayout'
-import { Row, Col, Table, Card, Statistic, Divider, Button, Form, List } from 'antd'
+import { useDispatch, useSelector } from 'react-redux'
+import { setGroupStatementList } from '../store/actions/index'
+import { Row, Col, Table, Card, Statistic, Divider, Button, List } from 'antd'
 import Pie from '@ant-design/charts/lib/pie'
 import {
   PlusOutlined, MinusOutlined, WalletOutlined,
@@ -28,9 +30,12 @@ import FormInputText from '../components/formInputText'
 
 export default useMasterLayout(
   function StatementOverView () {
+    const dispatch = useDispatch()
+    const { statementGroupList } = useSelector(state => state.store)
     const API_URL = process.env.NEXT_PUBLIC_APP_API_ADDRESS
     const DATE_FORMAT = 'YYYY-MM-DD'
     const INIT_DATE = moment().format(DATE_FORMAT)
+    const LAST_LIMIT_DATE = moment().subtract(10, 'days').format(DATE_FORMAT)
     const NUMBER_CURRENCY = 'บาท'
     const NUMBER_PRECISION = 2
     const [tableData, setTableData] = useState([])
@@ -93,9 +98,16 @@ export default useMasterLayout(
       }
     }, [groupStatementParam])
 
+    useEffect(() => {
+      if (tableData && Array.isArray(tableData) && tableData.length > 0) {
+        searchDashboard()
+      }
+    }, [tableData])
+
     async function getGroupStatement () {
       const groupStatementData = await _getGroupStatement()
       if (groupStatementData) {
+        dispatch(setGroupStatementList(groupStatementData))
         setGroupStatement(groupStatementData)
       }
     }
@@ -255,7 +267,6 @@ export default useMasterLayout(
     }
 
     async function editGroupStatement () {
-      console.log({ groupStatementParam })
       axios.patch(`${API_URL}/app/statement/group/${groupStatementParam.id}/`, groupStatementParam).then(() => {
         getGroupStatement()
         resetGroupStatement()
@@ -295,6 +306,7 @@ export default useMasterLayout(
         if (result.isConfirmed) {
           axios.delete(`${API_URL}/app/statement/group/${idx}`).then(() => {
             getGroupStatement()
+            resetGroupStatement()
             _alertMessage('success', 'ลบสำเร็จ')
           }).catch(error => {
             _alertMessage('error', 'เกิดข้อผิดพลาด', error)
@@ -365,20 +377,30 @@ export default useMasterLayout(
       </Row>
       <Divider orientation="left" style={{ marginTop: '50px' }}>กราฟ</Divider>
       <Row style={{ margin: '20px 0' }}>
-        <Col span={24}>
-          <Form layout="inline">
-            <FormDatePicker
-              name={'start_date'}
-              oldValue={moment().subtract(10, 'days').format(DATE_FORMAT)}
-              onCallback={changeDashboardConfig} />
-            <FormDatePicker
-              name={'end_date'}
-              oldValue={moment().format(DATE_FORMAT)}
-              onCallback={changeDashboardConfig} />
-            <Form.Item>
-              <Button type="primary" onClick={e => searchDashboard()}>เรียกดู</Button>
-            </Form.Item>
-          </Form>
+        <Col xs={24} md={4} className={'mx-1'}>
+          <label>{_translator('start_date')}</label>
+          <FormDatePicker
+            name={'start_date'}
+            isHideName
+            oldValue={LAST_LIMIT_DATE}
+            onCallback={changeDashboardConfig} />
+        </Col>
+        <Col xs={24} md={4} className={'mx-1'}>
+          <label>{_translator('end_date')}</label>
+          <FormDatePicker
+            name={'end_date'}
+            isHideName
+            oldValue={INIT_DATE}
+            onCallback={changeDashboardConfig} />
+        </Col>
+        <Col xs={24} md={2}
+             className={'mx-1'}
+             style={{
+                    transform: 'translateY(-3%)',
+                    alignSelf: 'center'
+              }}>
+          <Button type="primary"
+                  onClick={e => searchDashboard()}>เรียกดู</Button>
         </Col>
       </Row>
       <Row style={{ margin: '30px 0' }}
@@ -397,7 +419,7 @@ export default useMasterLayout(
         onCallbackEdit={saveEditData}
         onCallbackAdd={createStatement}
         onCallbackDelete={deleteStatement}
-        selectionList={{ 'group': groupStatement, 'type': typeList }}>
+        selectionList={{ 'group': statementGroupList, 'type': typeList }}>
         <Card size="small"
               title="หมวดหมู่"
               style={{

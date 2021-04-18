@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { _translator } from './function/translator'
 import moment from 'moment'
 
-export default function FormDatePicker ({ name, onCallback, oldValue }) {
+export default function FormDatePicker ({ name, onCallback, oldValue, isHideName }) {
   const DATE_FORMAT = 'YYYY-MM-DD'
   const [value, setValue] = useState(null)
 
@@ -20,7 +20,7 @@ export default function FormDatePicker ({ name, onCallback, oldValue }) {
     <Form.Item
       validateStatus={value === '' && 'error'}
       help={value === '' && `กรุณากรอก ${_translator(name)}`}
-      label={_translator(name)}>
+      label={!isHideName && _translator(name)}>
       <DatePicker
         style={{ width: '100%' }}
         onChange={dt => setValue(dt)}
@@ -32,5 +32,6 @@ export default function FormDatePicker ({ name, onCallback, oldValue }) {
 FormDatePicker.propTypes = {
   name: PropTypes.string,
   oldValue: PropTypes.string,
-  onCallback: PropTypes.func
+  onCallback: PropTypes.func,
+  isHideName: PropTypes.bool
 }
