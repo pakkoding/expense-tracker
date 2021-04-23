@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import useMasterLayout from '../layout/UseMasterLayout'
 import { useDispatch, useSelector } from 'react-redux'
 import { setGroupStatementList } from '../store/actions/index'
-import { Row, Col, Table, Card, Statistic, Divider, Button, List } from 'antd'
+import { Row, Col, Card, Statistic, Divider, Button, List } from 'antd'
 import Pie from '@ant-design/charts/lib/pie'
 import {
   PlusOutlined, MinusOutlined, WalletOutlined,
@@ -27,6 +27,7 @@ import { _findNullObject } from '../components/function/findNullObject'
 import { _pieConfig } from '../components/chart/pieChart.config'
 import { _sorterWithLocalCompare } from '../components/function/sorterWithLocalCompare'
 import FormInputText from '../components/formInputText'
+import TableWithSearch from '../components/table/tableWithSearch'
 
 export default useMasterLayout(
   function StatementOverView () {
@@ -41,7 +42,7 @@ export default useMasterLayout(
     const [tableData, setTableData] = useState([])
     const [groupStatement, setGroupStatement] = useState(null)
     const [modalData, setModalData] = useState(null)
-    const [modelMode, setModalMode] = useState(null)
+    const [modalMode, setModalMode] = useState(null)
     const [recordIndex, setRecordIndex] = useState(null)
     const [totalExpenseAmount, setTotalExpenseAmount] = useState(0)
     const [totalRevenueAmount, setTotalRevenueAmount] = useState(0)
@@ -92,6 +93,7 @@ export default useMasterLayout(
               symbol: record['type'] === 'รายรับ' ? '+' : '-'
             }
           }
+
           return {
             props: {
               style: { color: `${getValue(record)['color']}` }
@@ -164,7 +166,7 @@ export default useMasterLayout(
       setTableData(result)
     }
 
-    function useModal (mode, item, recordIdx) {
+    function useModal (item, recordIdx, mode) {
       setModalData({ ...item })
       setModalMode(mode)
       setRecordIndex(recordIdx)
@@ -378,16 +380,14 @@ export default useMasterLayout(
       </Button>
       <Row>
         <Col span={24}>
-          <Table
+          <TableWithSearch
             columns={columns}
             dataSource={tableData}
             pagination={false}
-            rowClassName={(record, idx) => 'clickable table-statement-row'}
-            onRow={(record, recordIdx) => {
-              return {
-                onClick: () => { useModal('edit', record, recordIdx) }
-              }
-            }}
+            rowClassName={'clickable table-statement-row'}
+            onCallBack={useModal}
+            canSearchColumn
+            callBackData={'edit'}
           />
         </Col>
       </Row>
@@ -431,7 +431,7 @@ export default useMasterLayout(
       <DataManagerModal
         title={'จัดการข้อมูล'}
         item={modalData}
-        mode={modelMode}
+        mode={modalMode}
         onCallbackEdit={saveEditData}
         onCallbackAdd={createStatement}
         onCallbackDelete={deleteStatement}
@@ -447,7 +447,9 @@ export default useMasterLayout(
               }}>
           <Row justify={'center'}>
             <Col span={18}>
-              <FormInputText onCallback={ChangeTextGroupStatement} oldValue={groupStatementParam?.name || null} />
+              <FormInputText
+                onCallback={ChangeTextGroupStatement}
+                oldValue={groupStatementParam?.name || null} />
             </Col>
             <Col span={6}>
               <Button
@@ -459,7 +461,8 @@ export default useMasterLayout(
                 }}>
                 {isAddGroupStatement ? 'เพิ่ม' : 'แก้ไข'}
               </Button>
-              {!isAddGroupStatement && <small
+              {!isAddGroupStatement &&
+              <small
                 className={'clickable'}
                 style={{
                   position: 'absolute',
@@ -467,7 +470,10 @@ export default useMasterLayout(
                   bottom: '0',
                   transform: 'translateX(30%)'
                 }}
-                onClick={e => resetGroupStatement()}><u>ยกเลิก</u></small>}
+                onClick={e => resetGroupStatement()}>
+                <u>ยกเลิก</u>
+              </small>
+              }
             </Col>
           </Row>
           <List
