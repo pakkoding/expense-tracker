@@ -1,5 +1,8 @@
-from expense_tracker_app.models import (StatementGroup, Statement)
+from expense_tracker_app.models import (StatementGroup, Statement, Test)
 from rest_framework import serializers
+from django.core import serializers as sl
+import json
+from django.forms.models import model_to_dict
 
 
 class StatementGroupSerializer(serializers.ModelSerializer):
@@ -27,3 +30,19 @@ class StatementSerializerView(StatementSerializerCreate):
         if ins.group is not None:
             return ins.group.name
         return None
+
+
+class TestSaveJson(serializers.ModelSerializer):
+    class Meta:
+        model = Test
+        fields = '__all__'
+
+    def create(self, validated_data):
+        get_d = StatementGroup.objects.get(id=2)
+        dict_obj = model_to_dict(get_d)
+        serialized = json.dumps(dict_obj)
+        ins = Test()
+        # ins.jsF = sl.serialize('json', {get_d})
+        ins.jsF = serialized
+        ins.save()
+        print('2')

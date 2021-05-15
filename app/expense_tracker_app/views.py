@@ -1,7 +1,7 @@
 from rest_framework.generics import (ListCreateAPIView, RetrieveUpdateDestroyAPIView,)
-from expense_tracker_app.models import (StatementGroup, Statement)
+from expense_tracker_app.models import (StatementGroup, Statement, Test)
 from expense_tracker_app.serializers import (StatementGroupSerializer, StatementSerializerView,
-                                             StatementUDSerializer, StatementSerializerCreate)
+                                             StatementUDSerializer, StatementSerializerCreate, TestSaveJson)
 # from rest_framework.permissions import (IsAuthenticated)
 
 
@@ -31,3 +31,8 @@ class ManageStatementUD(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Statement.objects.all()
+
+
+class TestSaveJsons(ListCreateAPIView):
+    serializer_class = TestSaveJson
+    queryset = Test.objects.all()

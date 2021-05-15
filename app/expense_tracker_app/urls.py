@@ -7,4 +7,5 @@ urlpatterns = [
     path('statement/group/<str:pk>/', views.ManageStatementGroupUD.as_view(), name="statement-group-update-delete"),
     path('statement/', views.ManageStatementCR.as_view(), name="statement-view-create-read"),
     path('statement/<str:pk>/', views.ManageStatementUD.as_view(), name="statement-update-delete"),
+    path('test/', views.TestSaveJsons.as_view(), name="test"),
 ]
